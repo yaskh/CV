@@ -1,61 +1,33 @@
-#!/usr/bin/env python2
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Mar 10 22:28:54 2019
-
-@author: kazzastic
-"""
-
-import numpy as np
-import os
-import tarfile
+import pandas as pd 
 import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
+data = pd.read_csv("SCIT dataset.csv")
 
-#Loadinng data of my class
-data = pd.read_csv('SCIT dataset.csv',index_col = 0)
-
-# Already mentioned in our dataset, the distrcits are 
-# East, West, South, Central, Malir, Korangi
 Districts = ('East', 'West', 'South', 'Central', 'Malir', 'Korangi')
+dataset = pd.DataFrame
+print(data.head())
 
-y_pos = np.arange(len(Districts))
+for value in data["District"]:
+    print(Districts[value-1])
+    data["Distrit"].replace(data["Distrit"],Districts[value-1])
+#    print(data["District"])
+    
+#data.District.replace(1,"East")
 
-'''
-Starting of multiple bar chart
-'''
-def multi_chart():
-    data = pd.read_csv('SCIT dataset.csv',index_col = 0)
-    freq = [[]]
-    for i in range(1,7):
-        dist = data[data['X1']==i]
-        freq[i-1].append(len(dist[(dist['X2'] >= 11) & (dist['X2'] <= 20)]))
-        freq[i-1].append(len(dist[(dist['X2'] >= 21) & (dist['X2'] <= 30)]))
-        freq[i-1].append(len(dist[(dist['X2'] >= 31) & (dist['X2'] <= 45)]))
-        freq[i-1].append(len(dist[dist['X2'] > 45]))
-        freq.append([])
-    freq.pop(6)
+districts = sorted(data.District.unique())
+for i in range(len(Districts)):
+    data.District = data.District.replace(districts[i],Districts[i])
     
-    frq = [[freq[j][i] for j in range(len(freq))] for i in range(len(freq[0]))] 
-    plt.bar(y_pos-0.3,frq[0],width = 0.2)
-    plt.bar(y_pos-0.1,frq[1],width = 0.2)
-    plt.bar(y_pos+0.1,frq[2],width = 0.2)
-    plt.bar(y_pos+0.3,frq[3],width = 0.2)
+Transport = ("Van","Bus","Car","Bike","Walk")
+transport = sorted(data['Mode of transport'].unique())
+for i in range(len(Transport)):
+    data['Mode of transport'] = data['Mode of transport'].replace(transport[i],Transport[i])
 
-'''
-Strating of bar chart
-'''
-def chart():
-    #breaking the data for the x-axis values
-    frequency = []
-    for i in range(1,7):
-        dist = data[data['X1']==i]
-        frequency.append(len(dist))
-    
-    plt.bar(y_pos, frequency, align = 'center', alpha = 0.5)
-    plt.xticks(y_pos, Districts)
-    plt.yticks('Frequency')
-    plt.title("Simple Bar Diagram")
-    
-chart()
+data.to_csv("scit_updated.csv",index = False,columns = ["Roll No","District","Time to reach","Mode of transport","Distance"])
+
+X = data["Distance"]
+y = data["Time to reach"]
+
+plt.scatter(X,y)
+plt.axis(["Distance","Time"])
+plt.hist2d(X,y) #Peak at 12.5
+plt.show
