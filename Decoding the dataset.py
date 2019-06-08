@@ -26,8 +26,3 @@ data.to_csv("scit_updated.csv",index = False,columns = ["Roll No","District","Ti
 
 X = data["Distance"]
 y = data["Time to reach"]
-
-plt.scatter(X,y)
-plt.axis(["Distance","Time"])
-plt.hist2d(X,y) #Peak at 12.5
-plt.show
